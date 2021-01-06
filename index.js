@@ -46,7 +46,7 @@ app.post('/check-cache', async (req, res) => {
 
         return res.status(500).type('application/json').send(JSON.stringify({
             'success': false,
-            'reason': `Invalid URL`,
+            'error': `Invalid URL`,
         }));
 
     }
@@ -61,7 +61,23 @@ async function check_cache(url, res) {
         { headers: { 'User-Agent': userAgent }},
         function(error, response) {
 
-            if( response.headers['cf-cache-status'] == undefined ) {
+            if ( error || response.statusCode != 200 ) {
+
+                if( error ) {
+                    res.status(200).type('application/json').send(JSON.stringify({
+                        'success': false,
+                        'error': error,
+                    }));
+                }
+                else {
+                    res.status(200).type('application/json').send(JSON.stringify({
+                        'success': false,
+                        'error': "status code "+response.statusCode,
+                    }));
+                }
+
+            }
+            else if( response.headers['cf-cache-status'] == undefined ) {
 
                 res.status(200).type('application/json').send(JSON.stringify({
                     'success': true,

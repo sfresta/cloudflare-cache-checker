@@ -19,7 +19,7 @@ where <b>{CACHE_STATUS_DETECTED}</b> can be:
 
 If you pass an invalid URL as argument, the following JSON array is returned:
 
-<code>{"success":false,"reason":"Invalid URL"}</code>
+<code>{"success":false,"error":"{ERROR HERE}"}</code>
 
 By default, this application is listen on port 6336.
 
