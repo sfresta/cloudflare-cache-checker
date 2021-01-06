@@ -19,7 +19,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 
 var server = app.listen(PORT, function() {
-    console.log(`Scraper is listening on port ${PORT}`);
+    console.log(`Cloudflare Cache Checker is listening on port ${PORT}`);
 });
 
 server.timeout = TIMEOUT;
