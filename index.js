@@ -7,8 +7,8 @@ const queue          = require('express-queue');
 const bodyParser     = require("body-parser");
 const request        = require('request');
 
+const TIMEOUT        = 10000;
 const PORT           = 6336;
-const TIMEOUT        = 3000; // 3 secs
 const app            = express();
 const userAgent      = 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.111 Safari/537.36';
 
@@ -46,6 +46,7 @@ app.post('/check-cache', async (req, res) => {
 
         return res.status(500).type('application/json').send(JSON.stringify({
             'success': false,
+            'url': url,
             'error': `Invalid URL`,
         }));
 
@@ -64,16 +65,22 @@ async function check_cache(url, res) {
             if ( error || response.statusCode != 200 ) {
 
                 if( error ) {
+
                     res.status(200).type('application/json').send(JSON.stringify({
                         'success': false,
+                        'url': url,
                         'error': error,
                     }));
+
                 }
                 else {
+
                     res.status(200).type('application/json').send(JSON.stringify({
                         'success': false,
+                        'url': url,
                         'error': "status code "+response.statusCode,
                     }));
+
                 }
 
             }
@@ -81,6 +88,7 @@ async function check_cache(url, res) {
 
                 res.status(200).type('application/json').send(JSON.stringify({
                     'success': true,
+                    'url': url,
                     'cache_status': 'cloudflare_not_detected',
                     'response_headers': response.headers,
                 }));
@@ -90,6 +98,7 @@ async function check_cache(url, res) {
 
                 res.status(200).type('application/json').send(JSON.stringify({
                     'success': true,
+                    'url': url,
                     'cache_status': response.headers['cf-cache-status'],
                     'response_headers': response.headers,
                 }));
