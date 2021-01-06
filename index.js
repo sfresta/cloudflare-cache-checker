@@ -40,7 +40,7 @@ app.post('/check-cache', async (req, res) => {
 
 
     if( url != false ) {
-        check_cache( url, res, req );
+        check_cache( url, res );
     }
     else {
 
@@ -54,18 +54,31 @@ app.post('/check-cache', async (req, res) => {
 });
 
 
-async function check_cache(url, res, req) {
+async function check_cache(url, res) {
 
     request(
         url,
         { headers: { 'User-Agent': userAgent }},
-        function(error, response, body) {
+        function(error, response) {
 
-            // Return results to client
-            res.status(200).type('application/json').send(JSON.stringify({
-                'success': true,
-                'response_headers': response,
-            }));
+            if( response.headers['cf-cache-status'] == undefined ) {
+
+                res.status(200).type('application/json').send(JSON.stringify({
+                    'success': true,
+                    'cache_status': 'cloudflare_not_detected',
+                    'response_headers': response.headers,
+                }));
+
+            }
+            else {
+
+                res.status(200).type('application/json').send(JSON.stringify({
+                    'success': true,
+                    'cache_status': response.headers['cf-cache-status'],
+                    'response_headers': response.headers,
+                }));
+
+            }
 
         }
     );
